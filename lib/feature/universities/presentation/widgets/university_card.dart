@@ -1,0 +1,103 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:universities/core/constants/app_colors.dart';
+import 'package:universities/core/constants/app_radius.dart';
+import 'package:universities/core/constants/app_sizes.dart';
+import 'package:universities/core/constants/app_spacing.dart';
+import 'package:universities/core/theme/app_text_style.dart';
+import 'package:universities/feature/universities/domain/entities/university.dart';
+
+class UniversityCard extends StatelessWidget {
+  final University university;
+  final VoidCallback onTap;
+
+  const UniversityCard({
+    super.key,
+    required this.university,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final domain = university.domains.isNotEmpty
+        ? university.domains.first
+        : '-';
+
+    final hasImage =
+        university.imagePath != null && university.imagePath!.isNotEmpty;
+
+    return Card(
+      color: AppColor.surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        side: const BorderSide(color: AppColor.border),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                child: hasImage
+                    ? Image.file(
+                        File(university.imagePath!),
+                        width: AppSizes.sizeImageList,
+                        height: AppSizes.sizeImageList,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: AppSizes.sizeImageList,
+                        height: AppSizes.sizeImageList,
+                        decoration: BoxDecoration(
+                          color: AppColor.primary.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                        child: const Icon(
+                          Icons.school_rounded,
+                          color: AppColor.primary,
+                        ),
+                      ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      university.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.titleMedium,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      university.country,
+                      style: AppTextStyles.bodySecondary,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      domain,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.label,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColor.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
